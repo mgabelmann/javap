@@ -1,94 +1,71 @@
 package ca.mikegabelmann.util;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.concurrent.ExecutorService;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
- * Runs javap on every class file it finds and reports on the version.
+ * Searches a path for Java classes and jar files.
  * @author mgabelmann
  */
 public final class ClassVisitor extends SimpleFileVisitor<Path> {
-	private static final String EXTENSION = ".class";
+	/** Logger. */
+	private static final Logger log = LogManager.getLogger(ClassVisitor.class);
 	
+	/** Java class extension. */
+	public static final String EXTENSION_CLASS	= ".class";
+	
+	/** Java archive extension. */
+	public static final String EXTENSION_JAR	= ".jar";
+	
+	/** Service that manages threads. */
+	private ExecutorService service;
+	
+	
+	/**
+	 * Constructor.
+	 * @param service
+	 */
+	public ClassVisitor(final ExecutorService service) {
+		this.service = service;
+	}
+
 	@Override
 	public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-		//print directory
-		System.out.println(dir.toString());
-		
-		return super.preVisitDirectory(dir, attrs);
+			//print directory
+			if (log.isDebugEnabled()) {
+				log.debug(dir.toString());
+			}
+			
+			return FileVisitResult.CONTINUE;
 	}
 
 	@Override
 	public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
 		//only process class files
-		if (! file.toString().endsWith(EXTENSION)) {
-			return FileVisitResult.CONTINUE;
-		}
+		String f = file.toString();
 		
-		String className = file.toString();
-		
-		//call JavaP to process class file
-		Process p = Runtime.getRuntime().exec("javap -v -c " + className);
-		
-		BufferedReader in = null;
-		
-		String minor = null;
-		String major = null;
-		
-		try {
-			in = new BufferedReader(new InputStreamReader(p.getInputStream()));
-			
-			String line = null;
-			while ((line = in.readLine()) != null) {
-				if (line.contains("minor")) {
-					Matcher m1 = Pattern.compile(".*?minor\\sversion:\\s(\\d+).*").matcher(line);
-					if (m1.find()) {
-						minor = m1.group(1);
-					}
-					
-				} else if (line.contains("major")) {
-					Matcher m2 = Pattern.compile(".*?major\\sversion:\\s(\\d+).*").matcher(line);
-					if (m2.find()) {
-						major = m2.group(1);
-					}
-				}
-				
-				//exit once we find both, saves processing time
-				if (minor != null && major != null) break;
-			}
-				
-			if (minor == null) minor = "0";
-			JavaVersion version = Javap.versions.get(major + minor);
-			
-			//output version info
-			if (version != null) {
-				//if (Double.compare(version.getVersion(), 1.4) > 0) {
-					System.out.println(className + "\t" + version.toString());  
-				//}
-					
-				if (! Javap.records.contains(version.getVersion())) {
-					Javap.records.add(version.getVersion());
-				}
-				
-			} else {
-				System.out.println(className + "\tERROR - no version information");
+		if (! f.endsWith(EXTENSION_CLASS) && ! f.endsWith(EXTENSION_JAR)) {
+			if (log.isDebugEnabled()) {
+				log.debug("skipping " + f.toString());
 			}
 			
-		} catch (IOException ie) {
-			System.err.println(className + "\tERROR - " + ie.getMessage());
+		} else if (f.endsWith(EXTENSION_CLASS)) {
+			//java class file
+			service.execute(new ClassProcessor(file));
 			
-		} finally {
-			//ensure stream is closed
-			if (in != null) {
-				in.close();
-			}
+			//only process 1 class / directory
+			return FileVisitResult.SKIP_SIBLINGS;
+			
+		} else {
+			//must be a jar
+			service.execute(new JarProcessor(file));
 		}
 		
 		return FileVisitResult.CONTINUE;
@@ -100,6 +77,6 @@ public final class ClassVisitor extends SimpleFileVisitor<Path> {
 	 * @return
 	 */
 	private String getClassName(final Path p) {
-		return p.toString().replaceAll(".*?/?([\\w\\$\\_]+)\\.class", "$1");
+		return p.toString().replaceAll(".*?/?([\\w\\$\\_]+)\\" + EXTENSION_CLASS, "$1");
 	}
 }

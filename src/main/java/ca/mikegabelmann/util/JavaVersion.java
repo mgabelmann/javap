@@ -1,7 +1,7 @@
 package ca.mikegabelmann.util;
 
 /**
- * 
+ * List of Java version.
  * @author mgabelmann
  */
 public enum JavaVersion {
@@ -13,11 +13,21 @@ public enum JavaVersion {
 	JAVA_15(49, 0, 1.5),
 	JAVA_16(50, 0, 1.6),
 	JAVA_17(51, 0, 1.7),
-	//JAVA_18(52, 0, 1.8),
+	JAVA_18(52, 0, 1.8),
 	;
 
+	/** Java major version. */
+	private int major;
+	
+	/** Java minor version. */
+	private int minor;
+	
+	/** JDK version. */
+	private double version;
+	
+	
 	/**
-	 * 
+	 * Constructor.
 	 * @param major
 	 * @param minor
 	 * @param version
@@ -26,11 +36,6 @@ public enum JavaVersion {
 		this.major = major;
 		this.minor = minor;
 		this.version = version;
-	}
-	
-	@Override
-	public String toString() {
-		return "" + major + "." + minor + "\t" + version;
 	}
 	
 	public int getMajor() {
@@ -44,8 +49,9 @@ public enum JavaVersion {
 	public double getVersion() {
 		return version;
 	}
-
-	private int major;
-	private int minor;
-	private double version;
+	
+	@Override
+	public String toString() {
+		return "" + major + "." + minor + "\t" + version;
+	}
 }
