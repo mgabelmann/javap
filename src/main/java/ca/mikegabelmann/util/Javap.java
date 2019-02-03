@@ -29,7 +29,7 @@ public final class Javap {
 	public static final double MIN_VERSION = 1.2;
 	
 	/** Maximum JDK. */
-	public static final double MAX_VERSION = 1.5;
+	public static final double MAX_VERSION = 1.8;
 	
 	static {
 		for (JavaVersion v : JavaVersion.values()) {

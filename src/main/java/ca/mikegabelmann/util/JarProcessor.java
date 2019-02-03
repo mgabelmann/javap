@@ -66,7 +66,7 @@ public final class JarProcessor implements Runnable {
 							log.warn(jarFile.toString() + "\t" + version.toString());
 						
 						} else {
-							log.debug(jarFile.toString() + "\t" + version.getVersion());
+							log.info(jarFile.toString() + "\t" + version.getVersion());
 						}
 						
 						//add to list

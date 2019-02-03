@@ -5,7 +5,7 @@ package ca.mikegabelmann.util;
  * @author mgabelmann
  */
 public enum JavaVersion {
-	JAVA_10(45, 3, 1.0),
+	JAVA_10(45, 0, 1.0),
 	JAVA_11(45, 3, 1.1),
 	JAVA_12(46, 0, 1.2),
 	JAVA_13(47, 0, 1.3),

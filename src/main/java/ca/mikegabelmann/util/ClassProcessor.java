@@ -40,6 +40,8 @@ public final class ClassProcessor implements Runnable {
 			int magic = is.readInt();
 			
 			if (magic != 0xcafebabe) {
+				//NOTE: jasper files don't appear to have this set, are they really java files?
+				//all java classes have this set
 				log.warn("invalid class file - " + className);
 				is.close();
 				return;
@@ -58,11 +60,15 @@ public final class ClassProcessor implements Runnable {
 					log.warn(className + "\t" + version.toString());
 					
 				} else {
-					log.debug(className + "\t" + version.getVersion());
+					log.info(className + "\t" + version.getVersion());
 				}
 				
 				//add to list
 				Javap.addRecord(version.getVersion());
+			
+			} else {
+				//unknown version
+				log.warn(className + "\tunknown version(" + major + "." + minor + ")");
 			}
 			
 		} catch (IOException ie) {

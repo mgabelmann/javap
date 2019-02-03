@@ -51,21 +51,25 @@ public final class ClassVisitor extends SimpleFileVisitor<Path> {
 		//only process class files
 		String f = file.toString();
 		
-		if (! f.endsWith(EXTENSION_CLASS) && ! f.endsWith(EXTENSION_JAR)) {
+		if (f.endsWith(EXTENSION_JAR)) {
+			//must be a jar
+			service.execute(new JarProcessor(file));
+			
+		} else if (f.endsWith(EXTENSION_CLASS)) {
+			//must be a java class file
+			service.execute(new ClassProcessor(file));
+			
+			//process all classes
+			return FileVisitResult.CONTINUE;
+			
+			//only process 1 class / directory
+			//return FileVisitResult.SKIP_SIBLINGS;
+			
+		} else {
+			//must be some other type of file
 			if (log.isDebugEnabled()) {
 				log.debug("skipping " + f.toString());
 			}
-			
-		} else if (f.endsWith(EXTENSION_CLASS)) {
-			//java class file
-			service.execute(new ClassProcessor(file));
-			
-			//only process 1 class / directory
-			return FileVisitResult.SKIP_SIBLINGS;
-			
-		} else {
-			//must be a jar
-			service.execute(new JarProcessor(file));
 		}
 		
 		return FileVisitResult.CONTINUE;
