@@ -20,10 +20,10 @@ public final class Javap {
 	private static final Logger log = LogManager.getLogger(Javap.class);
 	
 	/** Collection of java versions keyed by majorminor version. */
-	public static final TreeMap<String, JavaVersion> versions = new TreeMap<String, JavaVersion>();
+	public static final TreeMap<String, JavaVersion> versions = new TreeMap<>();
 	
 	/** Collection of versions found. */
-	private static final TreeSet<Double> records = new TreeSet<Double>();
+	private static final TreeSet<Double> records = new TreeSet<>();
 	
 	/** Minimum JDK. */
 	public static final double MIN_VERSION = 1.2;
@@ -87,7 +87,7 @@ public final class Javap {
 			StringBuilder sb = new StringBuilder("versions: ");
 
 			for (Double d : Javap.records) {
-				sb.append(d + " ");
+				sb.append(d).append(" ");
 			}
 			
 			log.info(sb.toString());

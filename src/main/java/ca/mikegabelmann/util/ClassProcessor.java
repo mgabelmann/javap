@@ -39,10 +39,11 @@ public final class ClassProcessor implements Runnable {
 			DataInputStream is = new DataInputStream(new FileInputStream(classFile.toFile()));
 			int magic = is.readInt();
 			
-			if (magic != 0xcafebabe) {
+			if (magic != 0xCAFEBABE) {
 				//NOTE: jasper files don't appear to have this set, are they really java files?
 				//all java classes have this set
 				log.warn("invalid class file - " + className);
+
 				is.close();
 				return;
 			}
@@ -57,7 +58,7 @@ public final class ClassProcessor implements Runnable {
 			//output version info
 			if (version != null) {
 				if (Double.compare(version.getVersion(), Javap.MAX_VERSION) > 0 || Double.compare(version.getVersion(), Javap.MIN_VERSION) < 0) {
-					log.warn(className + "\t" + version.toString());
+					log.warn(className + "\t" + version);
 					
 				} else {
 					log.info(className + "\t" + version.getVersion());
