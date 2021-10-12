@@ -16,7 +16,7 @@ import org.apache.logging.log4j.Logger;
  */
 public final class ClassVisitor extends SimpleFileVisitor<Path> {
 	/** Logger. */
-	private static final Logger log = LogManager.getLogger(ClassVisitor.class);
+	private static final Logger LOG = LogManager.getLogger(ClassVisitor.class);
 	
 	/** Java class extension. */
 	public static final String EXTENSION_CLASS	= ".class";
@@ -30,24 +30,24 @@ public final class ClassVisitor extends SimpleFileVisitor<Path> {
 	
 	/**
 	 * Constructor.
-	 * @param service
+	 * @param service service
 	 */
 	public ClassVisitor(final ExecutorService service) {
 		this.service = service;
 	}
 
 	@Override
-	public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+	public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
 			//print directory
-			if (log.isDebugEnabled()) {
-				log.debug(dir.toString());
+			if (LOG.isDebugEnabled()) {
+				LOG.debug(dir.toString());
 			}
 			
 			return FileVisitResult.CONTINUE;
 	}
 
 	@Override
-	public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+	public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
 		//only process class files
 		String f = file.toString();
 		
@@ -62,13 +62,10 @@ public final class ClassVisitor extends SimpleFileVisitor<Path> {
 			//process all classes
 			return FileVisitResult.CONTINUE;
 			
-			//only process 1 class / directory
-			//return FileVisitResult.SKIP_SIBLINGS;
-			
 		} else {
 			//must be some other type of file
-			if (log.isDebugEnabled()) {
-				log.debug("skipping " + f.toString());
+			if (LOG.isDebugEnabled()) {
+				LOG.debug("skipping " + f);
 			}
 		}
 		
@@ -76,11 +73,12 @@ public final class ClassVisitor extends SimpleFileVisitor<Path> {
 	}
 	
 	/**
-	 * 
-	 * @param p
-	 * @return
+	 * Get class name.
+	 * @param p path to file
+	 * @return class name
 	 */
 	private String getClassName(final Path p) {
-		return p.toString().replaceAll(".*?/?([\\w\\$\\_]+)\\" + EXTENSION_CLASS, "$1");
+		return p.toString().replaceAll(".*?/?([\\w\\$_]+)\\" + EXTENSION_CLASS, "$1");
 	}
+
 }

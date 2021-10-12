@@ -17,7 +17,7 @@ import org.apache.logging.log4j.Logger;
  */
 public final class Javap {
 	/** Logger. */
-	private static final Logger log = LogManager.getLogger(Javap.class);
+	private static final Logger LOG = LogManager.getLogger(Javap.class);
 	
 	/** Collection of java versions keyed by majorminor version. */
 	public static final TreeMap<String, JavaVersion> versions = new TreeMap<>();
@@ -26,49 +26,50 @@ public final class Javap {
 	private static final TreeSet<Double> records = new TreeSet<>();
 	
 	/** Minimum JDK. */
-	public static final double MIN_VERSION = 1.2;
+	public static final double MIN_VERSION = JavaVersion.JAVA_1_4.getVersion();
 	
 	/** Maximum JDK. */
-	public static final double MAX_VERSION = 1.8;
+	public static final double MAX_VERSION = JavaVersion.JAVA_11.getVersion();
 	
 	static {
 		for (JavaVersion v : JavaVersion.values()) {
-			versions.put("" + v.getMajor() + v.getMinor(), v);
+			versions.put(JavaVersion.getKey(v), v);
 		}
 	}
 	
 	/**
 	 * Add record, synchronized because we have threads accessing this.
-	 * @param version
+	 * @param version version
 	 */
-	public static synchronized void addRecord(double version) {
+	public static synchronized void addRecord(final double version) {
 		if (! records.contains(version)) {
 			records.add(version);
 			
-			if (log.isDebugEnabled()) {
-				log.debug("added version: " + version);
+			if (LOG.isDebugEnabled()) {
+				LOG.debug("added version: " + version);
 			}
 		}
 	}
 	
 	/**
 	 * Process files by calling this method with the path to file/directory.
-	 * @param args
+	 * @param args command line arguments
 	 */
 	public static void main(final String[] args) throws Exception {
 		if (args.length != 1) {
 			System.err.println("Javap <path to classes>");
 			return;
 		}
-		
+
+		if (LOG.isInfoEnabled()) {
+			LOG.info("start");
+		}
+
 		//create fixed threadpool
 		ExecutorService service = Executors.newFixedThreadPool(8);
 		
 		//do work
 		ClassVisitor cv = new ClassVisitor(service);
-		
-		log.info("start");
-		
 		Files.walkFileTree(Paths.get(args[0]), cv);
 		
 		//stop accepting more work and wait till finished processing
@@ -76,23 +77,27 @@ public final class Javap {
 		
 		try {
 			//block and wait for work to complete or timeout occurs
-			service.awaitTermination(15, TimeUnit.MINUTES);
-		
+			boolean terminated = service.awaitTermination(15, TimeUnit.MINUTES);
+
+			if (!terminated) {
+				LOG.warn("timeout reached");
+			}
+
 		} catch(InterruptedException ie) {
-			log.warn("timed out - " + ie);
+			LOG.warn("timed out - " + ie);
 		}
 		
-		//log results
-		if (log.isInfoEnabled()) {
+		//LOG results
+		if (LOG.isInfoEnabled()) {
 			StringBuilder sb = new StringBuilder("versions: ");
 
 			for (Double d : Javap.records) {
 				sb.append(d).append(" ");
 			}
 			
-			log.info(sb.toString());
+			LOG.info(sb.toString());
+			LOG.info("finished");
 		}
-		
-		log.info("finished");
 	}
+
 }

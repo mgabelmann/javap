@@ -38,24 +38,36 @@ public enum JavaVersion {
 	
 	/**
 	 * Constructor.
-	 * @param major
-	 * @param minor
-	 * @param version
+	 * @param major major release number
+	 * @param minor minor release number
+	 * @param version release version
 	 */
-	private JavaVersion(final int major, final int minor, final double version) {
+	JavaVersion(final int major, final int minor, final double version) {
 		this.major = major;
 		this.minor = minor;
 		this.version = version;
 	}
-	
+
+	/**
+	 * Get major release number.
+	 * @return major release
+	 */
 	public int getMajor() {
 		return major;
 	}
 
+	/**
+	 * Get minor release number.
+	 * @return minor release
+	 */
 	public int getMinor() {
 		return minor;
 	}
 
+	/**
+	 * Get release version
+	 * @return version
+	 */
 	public double getVersion() {
 		return version;
 	}
@@ -63,5 +75,24 @@ public enum JavaVersion {
 	@Override
 	public String toString() {
 		return "" + major + "." + minor + "\t" + version;
+	}
+
+	/**
+	 * Get key used for hashing.
+	 * @param version version
+	 * @return key
+	 */
+	public static String getKey(final JavaVersion version) {
+		return JavaVersion.getKey(version.getMajor(), version.getMinor());
+	}
+
+	/**
+	 * Get key used for hashing.
+	 * @param major major release
+	 * @param minor minor release
+	 * @return key
+	 */
+	public static String getKey(final int major, final int minor) {
+		return "" + major + minor;
 	}
 }

@@ -16,14 +16,14 @@ import org.apache.logging.log4j.Logger;
  */
 public final class JarProcessor implements Runnable {
 	/** Logger. */
-	private static final Logger log = LogManager.getLogger(JarProcessor.class);
+	private static final Logger LOG = LogManager.getLogger(JarProcessor.class);
 	
 	/** Java archive file. */
 	private Path jarFile;
 	
 	/**
 	 * Constructor.
-	 * @param file
+	 * @param file file
 	 */
 	public JarProcessor(final Path file) {
 		this.jarFile = file;
@@ -40,33 +40,33 @@ public final class JarProcessor implements Runnable {
 				ZipEntry ze = e.nextElement();
 				
 				if (ze.getName().endsWith(ClassVisitor.EXTENSION_CLASS)) {
-					if (log.isTraceEnabled()) {
-						log.trace("processing zip entry: " + ze.getName());
+					if (LOG.isTraceEnabled()) {
+						LOG.trace("processing zip entry: " + ze.getName());
 					}
 					
 					DataInputStream is = new DataInputStream(zf.getInputStream(ze));
 					int magic = is.readInt();
 					
 					if (magic != 0xcafebabe) {
-						log.warn("invalid class file - " + ze.getName());
+						LOG.warn("invalid class file - " + ze.getName());
 						is.close();
 						break;
 					}
 					
-					String minor = "" + is.readUnsignedShort();
-					String major = "" + is.readUnsignedShort();
+					int minor = is.readUnsignedShort();
+					int major = is.readUnsignedShort();
 					
 					is.close();
 					
-					JavaVersion version = Javap.versions.get(major + minor);
+					JavaVersion version = Javap.versions.get(JavaVersion.getKey(major, minor));
 					
 					//output version info
 					if (version != null) {
 						if (Double.compare(version.getVersion(), Javap.MAX_VERSION) > 0 || Double.compare(version.getVersion(), Javap.MIN_VERSION) < 0) {
-							log.warn(jarFile.toString() + "\t" + version.toString());
+							LOG.warn(jarFile.toString() + "\t" + version);
 						
 						} else {
-							log.info(jarFile.toString() + "\t" + version.getVersion());
+							LOG.info(jarFile.toString() + "\t" + version.getVersion());
 						}
 						
 						//add to list
@@ -81,7 +81,7 @@ public final class JarProcessor implements Runnable {
 			zf.close();
 			
 		} catch (IOException ie) {
-			log.warn(ie);
+			LOG.error(ie);
 		}
 	}
 

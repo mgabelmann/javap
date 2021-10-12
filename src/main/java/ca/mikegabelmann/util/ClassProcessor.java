@@ -14,7 +14,7 @@ import org.apache.logging.log4j.Logger;
  */
 public final class ClassProcessor implements Runnable {
 	/** Logger. */
-	private static final Logger log = LogManager.getLogger(ClassProcessor.class);
+	private static final Logger LOG = LogManager.getLogger(ClassProcessor.class);
 	
 	/** Class file to process. */
 	private Path classFile;
@@ -31,8 +31,8 @@ public final class ClassProcessor implements Runnable {
 	public void run() {
 		String className = classFile.toString();
 		
-		if (log.isTraceEnabled()) {
-			log.trace("processing " + className);
+		if (LOG.isTraceEnabled()) {
+			LOG.trace("processing " + className);
 		}
 		
 		try {
@@ -42,26 +42,26 @@ public final class ClassProcessor implements Runnable {
 			if (magic != 0xCAFEBABE) {
 				//NOTE: jasper files don't appear to have this set, are they really java files?
 				//all java classes have this set
-				log.warn("invalid class file - " + className);
+				LOG.warn("invalid class file - " + className);
 
 				is.close();
 				return;
 			}
-			
-			String minor = "" + is.readUnsignedShort();
-			String major = "" + is.readUnsignedShort();
-			
+
+			int minor = is.readUnsignedShort();
+			int major = is.readUnsignedShort();
+
 			is.close();
-			
-			JavaVersion version = Javap.versions.get(major + minor);
+
+			JavaVersion version = Javap.versions.get(JavaVersion.getKey(major, minor));
 			
 			//output version info
 			if (version != null) {
 				if (Double.compare(version.getVersion(), Javap.MAX_VERSION) > 0 || Double.compare(version.getVersion(), Javap.MIN_VERSION) < 0) {
-					log.warn(className + "\t" + version);
+					LOG.warn(className + "\t" + version);
 					
 				} else {
-					log.info(className + "\t" + version.getVersion());
+					LOG.info(className + "\t" + version.getVersion());
 				}
 				
 				//add to list
@@ -69,11 +69,12 @@ public final class ClassProcessor implements Runnable {
 			
 			} else {
 				//unknown version
-				log.warn(className + "\tunknown version(" + major + "." + minor + ")");
+				LOG.warn(className + "\tunknown version(" + major + "." + minor + ")");
 			}
 			
 		} catch (IOException ie) {
-			log.error(className + "\t" + ie.getMessage());	
+			LOG.error(className + "\t" + ie.getMessage());
 		}
 	}
+
 }
