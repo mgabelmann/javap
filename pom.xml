@@ -1,31 +1,35 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>ca.mikegabelmann.maven</groupId>
+		<artifactId>parent</artifactId>
+		<version>1.0-SNAPSHOT</version>
+	</parent>
+
 	<groupId>ca.mikegabelmann.util</groupId>
 	<artifactId>javap</artifactId>
 	<version>1.0-SNAPSHOT</version>
+	<packaging>jar</packaging>
+
 	<name>JavaP</name>
 	<description>Process class files and determine class version.</description>
 
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+	<scm>
+		<connection>scm:git:https://github.com/mgabelmann/javap.git</connection>
+		<developerConnection>scm:git:https://github.com/mgabelmann/javap.git</developerConnection>
+		<url>https://github.com/mgabelmann/javap</url>
+	</scm>
 
+	<properties>
 		<!-- NOTE: make compatible with the oldest version possible -->
 		<maven.compiler.release>8</maven.compiler.release>
-
-		<log4j.version>2.14.1</log4j.version>
 	</properties>
 	
-	<distributionManagement>
-		<repository>
-			<id>github</id>
-			<name>GitHub OWNER Apache Maven Packages</name>
-			<url>https://maven.pkg.github.com/mgabelmann/repository</url>
-		</repository>
-	</distributionManagement>
-	
 	<dependencies>
+
+		<!-- logging -->
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-api</artifactId>
@@ -36,23 +40,16 @@
 			<artifactId>log4j-core</artifactId>
 			<version>${log4j.version}</version>
 		</dependency>
+
 	</dependencies>
 
 	<build>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.8.1</version>
-					<configuration>
-						<showDeprecation>true</showDeprecation>
-						<showWarnings>true</showWarnings>
-						<release>${maven.compiler.release}</release>
-					</configuration>
-				</plugin>
-			</plugins>
-		</pluginManagement>
+		<plugins>
+
+		</plugins>
 	</build>
 
+	<reports>
+
+	</reports>
 </project>
