@@ -1,4 +1,4 @@
-package ca.mikegabelmann.util;
+package ca.mgabelmann.util.javap;
 
 import java.io.DataInputStream;
 import java.io.FileInputStream;
@@ -18,7 +18,8 @@ public final class ClassProcessor implements Runnable {
 	
 	/** Class file to process. */
 	private Path classFile;
-	
+
+
 	/**
 	 * Constructor.
 	 * @param file class file

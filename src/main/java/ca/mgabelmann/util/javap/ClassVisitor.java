@@ -1,4 +1,4 @@
-package ca.mikegabelmann.util;
+package ca.mgabelmann.util.javap;
 
 import java.nio.file.FileVisitResult;
 import java.nio.file.Path;
@@ -36,7 +36,7 @@ public final class ClassVisitor extends SimpleFileVisitor<Path> {
 	}
 
 	@Override
-	public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
+	public FileVisitResult preVisitDirectory(final Path dir, final BasicFileAttributes attrs) {
 			//print directory
 			if (LOG.isDebugEnabled()) {
 				LOG.debug(dir.toString());
@@ -46,7 +46,7 @@ public final class ClassVisitor extends SimpleFileVisitor<Path> {
 	}
 
 	@Override
-	public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+	public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) {
 		//only process class files
 		String f = file.toString();
 		

@@ -1,4 +1,4 @@
-package ca.mikegabelmann.util;
+package ca.mgabelmann.util.javap;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -36,7 +36,8 @@ public final class Javap {
 			versions.put(JavaVersion.getKey(v), v);
 		}
 	}
-	
+
+
 	/**
 	 * Add record, synchronized because we have threads accessing this.
 	 * @param version version

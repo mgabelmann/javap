@@ -1,4 +1,4 @@
-package ca.mikegabelmann.util;
+package ca.mgabelmann.util.javap;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -20,7 +20,8 @@ public final class JarProcessor implements Runnable {
 	
 	/** Java archive file. */
 	private Path jarFile;
-	
+
+
 	/**
 	 * Constructor.
 	 * @param file file
