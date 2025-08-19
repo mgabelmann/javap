@@ -29,7 +29,7 @@ public final class Javap {
 	public static final double MIN_VERSION = JavaVersion.JAVA_1_4.getVersion();
 	
 	/** Maximum JDK. */
-	public static final double MAX_VERSION = JavaVersion.JAVA_11.getVersion();
+	public static final double MAX_VERSION = JavaVersion.JAVA_30.getVersion();
 	
 	static {
 		for (JavaVersion v : JavaVersion.values()) {
